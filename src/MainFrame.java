@@ -21,7 +21,7 @@ public class MainFrame extends JFrame{
     private JMenuItem jmiExit = new JMenuItem("Exit");
     private JMenuItem jmiLotto = new JMenuItem("Lotto");
     private JDesktopPane jdp = new JDesktopPane();
-    private JInternalFrame jif = new JInternalFrame();
+    private JInternalFrame jif = new JInternalFrame();//子視窗
     private int data[] = new int[6];
     private JLabel jlab[] = new JLabel[6];
     private Random rnd = new Random(System.currentTimeMillis());
@@ -45,12 +45,23 @@ public class MainFrame extends JFrame{
         jif.setLayout(new BorderLayout(3,3));
         jif.add(jpnControl,BorderLayout.NORTH);
         jif.add(jpnNumber,BorderLayout.CENTER);
-
+        Number();
         jpnControl.add(jbtnClose);
         jpnControl.add(jbtnRemake);
 
         jmiExit.setAccelerator(KeyStroke.getKeyStroke('C',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-    Number();
+
+
+        for(int i = 0;i<6;i++){
+
+            jlab[i] = new JLabel();
+            jlab[i].setHorizontalAlignment(SwingConstants.CENTER);
+            jlab[i].setOpaque(true);
+            jlab[i].setBackground(new Color(40,143,255));
+            jlab[i].setText(Integer.toString(data[i]));
+
+            jpnNumber.add(jlab[i]);
+        }
 
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -72,11 +83,6 @@ public class MainFrame extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 jdp.add(jif);
                 jif.setVisible(true);
-
-                for(int i = 0;i<6;i++){
-                    jlab[i] = new JLabel();
-                    jpnNumber.add(jlab[i]);
-                }
             }
         });
 
@@ -86,21 +92,25 @@ public class MainFrame extends JFrame{
                 jif.setVisible(false);
             }
         });
+
+        jbtnRemake.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Number();
+                for(int i = 0;i<6;i++){
+                    jlab[i].setText(Integer.toString(data[i]));
+                }
+            }
+        });
     }
     private void Number(){
-        int i = 0;
-        while(i<6){
+        for(int i = 0;i <6;i++){
             data[i] = rnd.nextInt(42)+1;
-            int j = 0;
-            boolean flag = true;
-            while(j<i && flag){
+            for(int j = 0;j<i;j++){
                 if(data[i]==data[j]){
-                    flag = false;
+                    i--;
+                    break;
                 }
-                j++;
-            } if(flag){
-                jlab[i].setText(Integer.toString(data[i]));
-                i++;
             }
         }
     }
